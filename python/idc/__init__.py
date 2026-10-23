@@ -2,6 +2,10 @@
 
 Package portable (stdlib) pour envelopper un LLM avec ressource finie,
 journal append-only et règle d'arrêt.
+
+L'adaptateur LangGraph-shaped vit dans `idc.langgraph_adapter` (pas d'import
+lourd ici) : `IdcGraphRunner` fonctionne sans langgraph ;
+`compile_langgraph` requiert l'extra optionnel `[langgraph]`.
 """
 
 from .journal import AppendOnlyJournal, JournalEntry

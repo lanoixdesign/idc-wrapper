@@ -10,7 +10,7 @@ readme = "README.md"
 license = { text = "MIT" }
 authors = [{ name = "Micaël Lanoix" }]
 requires-python = ">=3.10"
-keywords = ["idc", "agents", "llm", "finitude", "stop-rule", "agi"]
+keywords = ["idc", "agents", "llm", "finitude", "stop-rule", "agi", "langgraph"]
 classifiers = [
   "License :: OSI Approved :: MIT License",
   "Programming Language :: Python :: 3",
@@ -21,6 +21,8 @@ dependencies = []
 
 [project.optional-dependencies]
 dev = []
+# LangGraph réel pour compile_langgraph() ; IdcGraphRunner n'en a pas besoin.
+langgraph = ["langgraph>=0.2"]
 
 [project.scripts]
 idc-agent = "idc_agent:main"
