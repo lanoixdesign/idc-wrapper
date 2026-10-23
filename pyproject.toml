@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "idc-wrapper"
+version = "0.2.0"
+description = "IDC — Effondrement Décisionnel Irréversible : ressource finie, journal append-only, règle d'arrêt pour agents LLM."
+readme = "README.md"
+license = { text = "MIT" }
+authors = [{ name = "Micaël Lanoix" }]
+requires-python = ">=3.10"
+keywords = ["idc", "agents", "llm", "finitude", "stop-rule", "agi"]
+classifiers = [
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+# stdlib only for the agent runtime
+dependencies = []
+
+[project.optional-dependencies]
+dev = []
+
+[project.scripts]
+idc-agent = "idc_agent:main"
+
+[tool.setuptools.packages.find]
+where = ["python"]
+include = ["idc*"]
+
+[tool.setuptools]
+py-modules = ["idc_agent"]
+package-dir = { "" = "python" }

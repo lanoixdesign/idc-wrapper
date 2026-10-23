@@ -1,45 +1,40 @@
 #!/usr/bin/env python3
-"""IDC agent loop — portable reference for any OpenAI-compatible chat API.
+"""IDC agent CLI — entrée fine (OpenAI-compatible ou --mock).
 
 Usage:
   export OPENAI_API_KEY=...
-  # optional: OPENAI_BASE_URL=https://api.openai.com/v1  OPENAI_MODEL=gpt-4o-mini
-  python idc_agent.py "Your task here"
+  python python/idc_agent.py "Your task here"
+
+  # Sans clé API (démo déterministe) :
+  python python/idc_agent.py --mock support_client "Question client : où est mon colis ?"
 """
 
 from __future__ import annotations
 
+import argparse
 import json
 import os
 import sys
 import urllib.error
 import urllib.request
-from dataclasses import dataclass, field
+from pathlib import Path
+
+# Permettre `python python/idc_agent.py` depuis la racine du dépôt
+_ROOT = Path(__file__).resolve().parent
+if str(_ROOT) not in sys.path:
+    sys.path.insert(0, str(_ROOT))
+
+from idc import AppendOnlyJournal, IdcAgent, MockBackend, MockScenario  # noqa: E402
+from idc.mock_backend import SCENARIOS  # noqa: E402
 
 
-@dataclass
-class AppendOnlyJournal:
-    entries: list[str] = field(default_factory=list)
+class OpenAIBackend:
+    def __init__(self, api_url: str, api_key: str, model: str) -> None:
+        self.api_url = api_url
+        self.api_key = api_key
+        self.model = model
 
-    def append(self, entry: str) -> None:
-        self.entries.append(entry)
-
-    def as_context(self) -> str:
-        return "\n---\n".join(self.entries)
-
-
-@dataclass
-class IdcAgent:
-    api_url: str
-    api_key: str
-    model: str
-    resource: float = 100.0
-    critical_threshold: float = 15.0
-    cost_per_token: float = 0.8
-    max_steps: int = 8
-    journal: AppendOnlyJournal = field(default_factory=AppendOnlyJournal)
-
-    def call_model(self, prompt: str, max_tokens: int = 120) -> str:
+    def generate(self, prompt: str, max_tokens: int = 120) -> str:
         body = {
             "model": self.model,
             "messages": [{"role": "user", "content": prompt}],
@@ -62,70 +57,83 @@ class IdcAgent:
             return ""
         return choices[0].get("message", {}).get("content") or ""
 
-    def still_worth_it(self, estimated_gain: float) -> bool:
-        marginal_cost = self.cost_per_token * 50.0
-        risk = 2.0 if self.resource < 30.0 else 1.0
-        return estimated_gain > marginal_cost * risk
-
-    def run(self, task: str) -> str:
-        current = ""
-        step = 0
-        while self.resource > self.critical_threshold and step < self.max_steps:
-            step += 1
-            context = (
-                f"Journal des engagements précédents :\n{self.journal.as_context()}\n\n"
-                f"Tâche : {task}\n\n"
-                f"Réponse partielle actuelle :\n{current}\n\n"
-                "Continue ou affine la réponse. Sois concis."
-            )
-            try:
-                chunk = self.call_model(context, max_tokens=120)
-            except urllib.error.HTTPError as e:
-                raise SystemExit(f"HTTP {e.code}: {e.read().decode('utf-8', errors='replace')}") from e
-
-            tokens_approx = max(len(chunk.split()), 1)
-            cost = tokens_approx * self.cost_per_token
-            self.resource = max(0.0, self.resource - cost)
-            estimated_gain = 25.0 if len(chunk) > 20 else 8.0
-
-            print(
-                f"[étape {step}] R restante = {self.resource:.1f} | "
-                f"coût = {cost:.1f} | gain estimé = {estimated_gain:.1f}"
-            )
-
-            if (not self.still_worth_it(estimated_gain)) or self.resource <= self.critical_threshold:
-                print("→ Arrêt optimal déclenché.")
-                if chunk.strip():
-                    current = f"{current}{chunk}\n".strip()
-                    self.journal.append(f"Étape {step} : {chunk.strip()}")
-                break
-
-            current = f"{current}{chunk}\n"
-            self.journal.append(f"Étape {step} : {chunk.strip()}")
-
-        if not current.strip():
-            return "Je ne sais pas (ressource insuffisante ou incertitude trop élevée)."
-        return current.strip()
-
 
 def main() -> None:
-    task = " ".join(sys.argv[1:]).strip() or (
+    parser = argparse.ArgumentParser(description="IDC agent (OpenAI-compatible or --mock)")
+    parser.add_argument("task", nargs="*", help="Tâche / question")
+    parser.add_argument(
+        "--mock",
+        metavar="SCENARIO",
+        choices=sorted(SCENARIOS.keys()),
+        help="Utiliser un backend mock (pas de clé API)",
+    )
+    parser.add_argument("--baseline", action="store_true", help="Désactiver la règle d'arrêt VOI")
+    parser.add_argument("--resource", type=float, default=100.0)
+    parser.add_argument("--threshold", type=float, default=15.0)
+    parser.add_argument("--max-steps", type=int, default=8)
+    parser.add_argument("--cost-per-token", type=float, default=0.8)
+    args = parser.parse_args()
+
+    task = " ".join(args.task).strip() or (
         "Explique en 5 points pourquoi la finitude computationnelle peut réduire les hallucinations."
     )
-    base = os.environ.get("OPENAI_BASE_URL", "https://api.openai.com/v1").rstrip("/")
-    agent = IdcAgent(
-        api_url=f"{base}/chat/completions",
-        api_key=os.environ.get("OPENAI_API_KEY", ""),
-        model=os.environ.get("OPENAI_MODEL", "gpt-4o-mini"),
+
+    if args.mock:
+        scenario = SCENARIOS[args.mock]
+        backend: object = MockBackend(scenario=scenario)
+        gain_fn = backend.gain_for_step  # type: ignore[attr-defined]
+    else:
+        base = os.environ.get("OPENAI_BASE_URL", "https://api.openai.com/v1").rstrip("/")
+        api_key = os.environ.get("OPENAI_API_KEY", "")
+        if not api_key:
+            raise SystemExit(
+                "Set OPENAI_API_KEY, or pass --mock <scenario> "
+                f"(scenarios: {', '.join(sorted(SCENARIOS))})."
+            )
+        backend = OpenAIBackend(
+            api_url=f"{base}/chat/completions",
+            api_key=api_key,
+            model=os.environ.get("OPENAI_MODEL", "gpt-4o-mini"),
+        )
+        gain_fn = None
+
+    agent_kwargs = dict(
+        backend=backend,
+        resource=args.resource,
+        critical_threshold=args.threshold,
+        cost_per_token=args.cost_per_token,
+        max_steps=args.max_steps,
+        use_stop_rule=not args.baseline,
     )
-    if not agent.api_key:
-        raise SystemExit("Set OPENAI_API_KEY (OpenAI-compatible).")
+    if gain_fn is not None:
+        agent_kwargs["gain_fn"] = gain_fn
 
-    result = agent.run(task)
-    print("\n=== RÉPONSE FINALE (après effondrement) ===\n" + result)
-    print("\n=== JOURNAL APPEND-ONLY ===\n" + agent.journal.as_context())
-    print(f"\nRessource finale : {agent.resource:.1f}")
+    agent = IdcAgent(**agent_kwargs)
+    try:
+        result = agent.run(task)
+    except urllib.error.HTTPError as e:
+        raise SystemExit(f"HTTP {e.code}: {e.read().decode('utf-8', errors='replace')}") from e
 
+    mode = "BASELINE (pas de VOI)" if args.baseline else "IDC (règle d'arrêt)"
+    print(f"=== MODE : {mode} ===")
+    for e in result.journal.entries:
+        print(
+            f"[étape {e.step}] R={e.resource_after:.1f} | "
+            f"coût={e.cost:.1f} | gain≈{e.estimated_gain:.1f} | tokens≈{e.tokens_approx}"
+        )
+    if result.stopped_early:
+        print("→ Arrêt anticipé (VOI / seuil).")
+    print("\n=== RÉPONSE FINALE (après effondrement) ===\n" + result.answer)
+    print("\n=== JOURNAL APPEND-ONLY ===\n" + result.journal.as_context())
+    print(
+        f"\nRessource finale : {result.resource_final:.1f} | "
+        f"étapes : {result.steps} | tokens≈{result.tokens_approx_total} | "
+        f"ignorance : {result.admitted_ignorance}"
+    )
+
+
+# Ré-exports pour import legacy : `from idc_agent import IdcAgent, AppendOnlyJournal`
+__all__ = ["AppendOnlyJournal", "IdcAgent", "MockBackend", "MockScenario", "main"]
 
 if __name__ == "__main__":
     main()
