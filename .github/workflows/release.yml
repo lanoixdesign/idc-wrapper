@@ -22,24 +22,36 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Create tag and GitHub Release
+      - name: Create GitHub Release (tag via gh)
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: ${{ inputs.tag }}
           REL_NAME: ${{ inputs.name }}
         run: |
           set -euo pipefail
-          if git rev-parse "$TAG" >/dev/null 2>&1; then
-            echo "Tag $TAG existe déjà — on met à jour / crée la release si besoin."
-          else
-            git tag -a "$TAG" -m "$REL_NAME"
-            git push origin "$TAG"
-          fi
+          # Notes courtes (évite de republier tout le CHANGELOG brut)
+          NOTES=$(mktemp)
+          {
+            echo "## ${REL_NAME}"
+            echo
+            echo "Voir [CHANGELOG.md](https://github.com/lanoixdesign/idc-wrapper/blob/main/CHANGELOG.md) pour le détail."
+            echo
+            echo "### Highlights"
+            echo "- Package Python \`python/idc/\` (journal, agent, mock)"
+            echo "- Exemples 01–04 (dont adaptateur LangGraph-shaped)"
+            echo "- Micro-benchmarks mock + PERFORMANCE.md honnête"
+            echo "- Extra optionnel : \`pip install idc-wrapper[langgraph]\`"
+          } > "$NOTES"
+
           if gh release view "$TAG" >/dev/null 2>&1; then
             echo "Release $TAG existe déjà."
+            gh release view "$TAG" --json url -q .url
           else
+            # gh crée le tag annoté sur --target sans config git user locale
             gh release create "$TAG" \
+              --target main \
               --title "$REL_NAME" \
-              --notes-file CHANGELOG.md \
+              --notes-file "$NOTES" \
               --latest
+            echo "Créé : https://github.com/lanoixdesign/idc-wrapper/releases/tag/$TAG"
           fi
