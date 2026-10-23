@@ -1,0 +1,134 @@
+{
+  "meta": {
+    "generated_at": "2026-10-23T10:50:28.400673+00:00",
+    "python": "3.13.5",
+    "platform": "Linux-6.12.94+-x86_64-with-glibc2.41",
+    "note": "Mock LLM only. Numbers are reproducible on this machine with benchmarks/bench_mock.py. NOT production FLOPS or survival rates.",
+    "idc_version": "0.2.0"
+  },
+  "rows": [
+    {
+      "scenario": "support_client",
+      "mode": "baseline",
+      "steps": 8,
+      "tokens_approx": 67,
+      "resource_final": 46.4,
+      "cost_total": 53.6,
+      "stopped_early": false,
+      "admitted_ignorance": false,
+      "elapsed_ms": 0.1
+    },
+    {
+      "scenario": "support_client",
+      "mode": "idc",
+      "steps": 4,
+      "tokens_approx": 36,
+      "resource_final": 71.2,
+      "cost_total": 28.8,
+      "stopped_early": true,
+      "admitted_ignorance": false,
+      "elapsed_ms": 0.028
+    },
+    {
+      "scenario": "code_assistant",
+      "mode": "baseline",
+      "steps": 8,
+      "tokens_approx": 45,
+      "resource_final": 64.0,
+      "cost_total": 36.0,
+      "stopped_early": false,
+      "admitted_ignorance": false,
+      "elapsed_ms": 0.04
+    },
+    {
+      "scenario": "code_assistant",
+      "mode": "idc",
+      "steps": 4,
+      "tokens_approx": 31,
+      "resource_final": 75.2,
+      "cost_total": 24.8,
+      "stopped_early": true,
+      "admitted_ignorance": false,
+      "elapsed_ms": 0.017
+    },
+    {
+      "scenario": "research_synth",
+      "mode": "baseline",
+      "steps": 8,
+      "tokens_approx": 44,
+      "resource_final": 64.8,
+      "cost_total": 35.2,
+      "stopped_early": false,
+      "admitted_ignorance": false,
+      "elapsed_ms": 0.037
+    },
+    {
+      "scenario": "research_synth",
+      "mode": "idc",
+      "steps": 4,
+      "tokens_approx": 32,
+      "resource_final": 74.4,
+      "cost_total": 25.6,
+      "stopped_early": true,
+      "admitted_ignorance": false,
+      "elapsed_ms": 0.015
+    },
+    {
+      "scenario": "verbose",
+      "mode": "baseline",
+      "steps": 8,
+      "tokens_approx": 60,
+      "resource_final": 52.0,
+      "cost_total": 48.0,
+      "stopped_early": false,
+      "admitted_ignorance": false,
+      "elapsed_ms": 0.037
+    },
+    {
+      "scenario": "verbose",
+      "mode": "idc",
+      "steps": 4,
+      "tokens_approx": 33,
+      "resource_final": 73.6,
+      "cost_total": 26.4,
+      "stopped_early": true,
+      "admitted_ignorance": false,
+      "elapsed_ms": 0.015
+    },
+    {
+      "scenario": "uncertain",
+      "mode": "baseline",
+      "steps": 8,
+      "tokens_approx": 8,
+      "resource_final": 93.6,
+      "cost_total": 6.4,
+      "stopped_early": false,
+      "admitted_ignorance": true,
+      "elapsed_ms": 0.03
+    },
+    {
+      "scenario": "uncertain",
+      "mode": "idc",
+      "steps": 1,
+      "tokens_approx": 1,
+      "resource_final": 99.2,
+      "cost_total": 0.8,
+      "stopped_early": true,
+      "admitted_ignorance": true,
+      "elapsed_ms": 0.003
+    }
+  ],
+  "aggregates": {
+    "avg_steps_baseline": 8.0,
+    "avg_steps_idc": 3.4,
+    "avg_tokens_baseline": 44.8,
+    "avg_tokens_idc": 26.6,
+    "avg_resource_final_baseline": 64.16,
+    "avg_resource_final_idc": 78.72,
+    "forced_ignorance_rate_uncertain_idc": 1.0,
+    "forced_ignorance_rate_uncertain_baseline": 1.0,
+    "uncertain_budget_variants": 5,
+    "single_run_uncertain_admitted_idc": true,
+    "single_run_uncertain_admitted_baseline": true
+  }
+}
