@@ -2,6 +2,22 @@
 name = "idc-wrapper"
 version = "0.2.0"
 edition = "2021"
+description = "IDC — Effondrement Décisionnel Irréversible : ressource finie, journal append-only, règle d'arrêt pour agents LLM."
+license = "MIT"
+repository = "https://github.com/lanoixdesign/idc-wrapper"
+homepage = "https://github.com/lanoixdesign/idc-wrapper"
+readme = "README.md"
+keywords = ["idc", "agents", "llm", "finitude", "stop-rule"]
+categories = ["science", "asynchronous", "api-bindings"]
+authors = ["Micaël Lanoix"]
+
+[lib]
+name = "idc_wrapper"
+path = "src/lib.rs"
+
+[[bin]]
+name = "idc-wrapper"
+path = "src/main.rs"
 
 [dependencies]
 tokio = { version = "1", features = ["full"] }
