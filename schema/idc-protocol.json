@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/lanoixdesign/idc-wrapper/schema/idc-protocol.json",
+  "title": "IDC Protocol",
+  "description": "Machine-readable contract for Irreversible Decision Collapse (Effondrement Décisionnel Irréversible).",
+  "type": "object",
+  "required": ["version", "resource", "critical_threshold", "journal", "stop_rule"],
+  "properties": {
+    "version": { "type": "string", "const": "0.1.0" },
+    "resource": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Remaining deliberation budget."
+    },
+    "critical_threshold": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Force collapse when resource <= this value."
+    },
+    "cost_per_token": {
+      "type": "number",
+      "minimum": 0,
+      "default": 0.8
+    },
+    "max_steps": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 8
+    },
+    "journal": {
+      "type": "array",
+      "description": "Append-only commitments. Never delete or rewrite entries.",
+      "items": {
+        "type": "object",
+        "required": ["step", "text"],
+        "properties": {
+          "step": { "type": "integer", "minimum": 1 },
+          "text": { "type": "string" },
+          "resource_after": { "type": "number" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "stop_rule": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["voi_vs_marginal_cost", "resource_only", "custom"]
+        },
+        "description": {
+          "type": "string",
+          "default": "Stop when estimated value of more deliberation is below marginal cost times risk factor."
+        }
+      }
+    },
+    "collapse_policy": {
+      "type": "object",
+      "properties": {
+        "on_empty": {
+          "type": "string",
+          "default": "Admit ignorance rather than invent."
+        },
+        "irreversible": { "type": "boolean", "const": true }
+      }
+    }
+  },
+  "additionalProperties": false
+}
