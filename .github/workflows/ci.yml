@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  python:
+    name: Python tests + mock bench
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Unit tests (mock, no API keys)
+        run: PYTHONPATH=python python -m unittest discover -s python/idc -v
+      - name: Mock benchmark
+        run: PYTHONPATH=python python benchmarks/bench_mock.py
+      - name: Examples smoke
+        run: |
+          PYTHONPATH=python python examples/01_support_client/run_mock.py
+          PYTHONPATH=python python examples/02_code_assistant/run_mock.py
+          PYTHONPATH=python python examples/03_research_synth/run_mock.py
+
+  rust:
+    name: Rust cargo check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: cargo check
+        run: cargo check
