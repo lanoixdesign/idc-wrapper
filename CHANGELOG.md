@@ -5,6 +5,22 @@ Toutes les modifications notables de ce projet sont documentées ici.
 Le format s’inspire de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/),
 et ce projet adhère au [Versionnage Sémantique](https://semver.org/lang/fr/).
 
+## [Unreleased]
+
+### Ajouté
+- `ROADMAP.md` (v0.3 PyPI/crates.io ; v0.4 bench LLM réel + adapters).
+- `PUBLISHING.md` + `.github/workflows/publish-pypi.yml` (OIDC trusted publishing).
+- Packs agents : `packs/cursor/`, `packs/claude/`, `packs/openai-agents/` (stub + interface).
+- `community/GOOD_FIRST_ISSUES.md` (3 textes prêts à coller).
+- `docs/demo.md` (flux ASCII + Mermaid de la boucle IDC).
+- Crate Rust scindée : `src/lib.rs` (API publique `IdcAgent`, `AppendOnlyJournal`) + `src/main.rs` mince.
+
+### Modifié
+- README : badges (licence, release v0.2.0, CI, Python, Rust), liens livre Amazon FR + `CITATION.cff`, section Roadmap, packs, pas de claims perf inventés.
+- `Cargo.toml` : description, license MIT, repository, readme, keywords, categories, `[lib]` / `[[bin]]`.
+- `CONTRIBUTING.md` : activer Discussions + topics (actions manuelles Settings).
+- `pyproject.toml` : métadonnées publish-ready (URLs projet).
+
 ## [0.2.0] — 2026-10-23
 
 ### Ajouté
@@ -33,5 +49,6 @@ et ce projet adhère au [Versionnage Sémantique](https://semver.org/lang/fr/).
 - `AGENTS.md`, skill `agents/skills/idc/SKILL.md`, schéma `schema/idc-protocol.json`.
 - Licence MIT.
 
+[Unreleased]: https://github.com/lanoixdesign/idc-wrapper/compare/v0.2.0...HEAD
 [0.2.0]: https://github.com/lanoixdesign/idc-wrapper/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/lanoixdesign/idc-wrapper/releases/tag/v0.1.0

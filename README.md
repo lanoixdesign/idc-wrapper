@@ -1,6 +1,7 @@
 # IDC Wrapper
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+[![Release](https://img.shields.io/github/v/release/lanoixdesign/idc-wrapper?display_name=tag&sort=semver)](https://github.com/lanoixdesign/idc-wrapper/releases/tag/v0.2.0)
 [![CI](https://github.com/lanoixdesign/idc-wrapper/actions/workflows/ci.yml/badge.svg)](https://github.com/lanoixdesign/idc-wrapper/actions/workflows/ci.yml)
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)](./python/)
 [![Rust](https://img.shields.io/badge/rust-2021-orange.svg)](./Cargo.toml)
@@ -27,6 +28,11 @@ C’est un **modèle + protocole de test**, pas une preuve empirique déjà vali
 sur les LLM de frontier. Les chiffres de ce dépôt viennent d’un **mock**
 reproductible — voir [PERFORMANCE.md](./PERFORMANCE.md).
 
+## Livre / concept
+
+- Livre (Amazon FR) : [Effondrement Décisionnel Irréversible](https://www.amazon.fr/dp/B0HMX1CY6R)
+- Citation machine-readable : [`CITATION.cff`](./CITATION.cff)
+
 ## Table des matières
 
 - [Pour les agents](#pour-les-agents)
@@ -34,9 +40,11 @@ reproductible — voir [PERFORMANCE.md](./PERFORMANCE.md).
 - [Quickstart Rust](#quickstart-rust)
 - [Exemples](#exemples)
 - [Adaptateur LangGraph](#adaptateur-langgraph)
+- [Packs agents](#packs-agents)
 - [Performance (mock)](#performance-mock)
 - [Structure](#structure)
 - [Paramètres](#paramètres)
+- [Roadmap](#roadmap)
 - [Communauté](#communauté)
 - [Licence & auteur](#licence--auteur)
 
@@ -51,8 +59,10 @@ Lis d’abord **[AGENTS.md](./AGENTS.md)**.
 | [`python/idc/`](./python/idc/) | Package référence (journal, agent, mock) |
 | [`python/idc/langgraph_adapter.py`](./python/idc/langgraph_adapter.py) | Adaptateur LangGraph-shaped (optionnel) |
 | [`python/idc_agent.py`](./python/idc_agent.py) | CLI (OpenAI-compatible ou `--mock`) |
-| [`src/main.rs`](./src/main.rs) | Implémentation Rust |
+| [`src/lib.rs`](./src/lib.rs) | Bibliothèque Rust (`IdcAgent`, journal) |
+| [`src/main.rs`](./src/main.rs) | Binaire CLI mince |
 | [`examples/`](./examples/) | Cas Sans IDC / Avec IDC |
+| [`packs/`](./packs/) | Snippets Cursor / Claude / OpenAI Agents |
 | [`PERFORMANCE.md`](./PERFORMANCE.md) | Mesures mock + hypothèses vs démontré |
 
 ## Quickstart Python
@@ -72,6 +82,13 @@ export OPENAI_API_KEY=sk-...
 PYTHONPATH=python python3 python/idc_agent.py "Explique l’IDC en 5 points"
 ```
 
+Installation package (editable locale ; PyPI public prévu — voir [PUBLISHING.md](./PUBLISHING.md)) :
+
+```bash
+pip install -e .
+# ou plus tard : pip install idc-wrapper
+```
+
 Tests / bench (aucune clé) :
 
 ```bash
@@ -87,7 +104,14 @@ export OPENAI_API_KEY=sk-...
 ./target/release/idc-wrapper
 ```
 
-Par défaut : `https://api.openai.com/v1/chat/completions`, modèle `gpt-4o-mini`.
+La logique vit dans la **crate lib** `idc_wrapper` (`src/lib.rs`) ; le binaire
+`src/main.rs` l’appelle seulement. Par défaut : `https://api.openai.com/v1/chat/completions`,
+modèle `gpt-4o-mini`.
+
+> **Note toolchain** : `cargo check` / `cargo build` nécessitent un Rust stable
+> récent (CI utilise `dtolnay/rust-toolchain@stable`). Si ton `rustc` local est
+> trop ancien pour les dépendances (`reqwest` / `tokio`), la structure lib+bin
+> reste valide — mets à jour le toolchain ou peaufine en CI.
 
 ## Exemples
 
@@ -100,7 +124,7 @@ Cas concrets avec narration **Sans IDC / Avec IDC / Bénéfice** et scripts mock
 | 03 | [`examples/03_research_synth`](./examples/03_research_synth/) | Synthèse bornée, pas de citation inventée |
 | 04 | [`examples/04_langgraph`](./examples/04_langgraph/) | Boucle nœud/état style LangGraph + arrêt IDC |
 
-Voir [`examples/README.md`](./examples/README.md).
+Voir [`examples/README.md`](./examples/README.md). Flux ASCII/Mermaid : [`docs/demo.md`](./docs/demo.md).
 
 ## Adaptateur LangGraph
 
@@ -122,6 +146,16 @@ from idc.langgraph_adapter import IdcGraphRunner, compile_langgraph
 
 Détails : [`examples/04_langgraph/README.md`](./examples/04_langgraph/README.md).
 
+## Packs agents
+
+Snippets copy-paste prêts :
+
+| Runtime | Pack |
+|---------|------|
+| Cursor | [`packs/cursor/RULE.md`](./packs/cursor/RULE.md) + [`packs/cursor/idc.mdc`](./packs/cursor/idc.mdc) |
+| Claude Code | [`packs/claude/CLAUDE.md`](./packs/claude/CLAUDE.md) |
+| OpenAI Agents SDK | [`packs/openai-agents/README.md`](./packs/openai-agents/README.md) (interface + stub) |
+
 ## Performance (mock)
 
 Micro-benchmark **Baseline (N fixes) vs IDC (règle d’arrêt)** sur réponses mock.
@@ -134,7 +168,7 @@ Dernière agrégation typique (régénérer localement pour confirmer) :
 | R finale moyenne | ~64.2 | ~78.7 |
 
 Détail, caveats, et distinction **hypothèse livre vs démontré par le code** :
-**[PERFORMANCE.md](./PERFORMANCE.md)**.
+**[PERFORMANCE.md](./PERFORMANCE.md)**. Aucun claim de perf LLM réel ici.
 
 ## Structure
 
@@ -142,14 +176,20 @@ Détail, caveats, et distinction **hypothèse livre vs démontré par le code** 
 idc-wrapper/
 ├── AGENTS.md                 # contrat pour runtimes agents
 ├── PERFORMANCE.md            # mesures mock honnêtes
+├── ROADMAP.md                # v0.3 / v0.4
+├── PUBLISHING.md             # PyPI trusted publisher
 ├── python/idc/               # package (journal, agent, mock, langgraph_adapter)
 ├── python/idc_agent.py       # CLI
-├── src/main.rs               # Rust
+├── src/lib.rs                # crate Rust publique
+├── src/main.rs               # binaire mince
 ├── schema/idc-protocol.json
 ├── agents/skills/idc/SKILL.md
+├── packs/                    # Cursor / Claude / OpenAI Agents
 ├── examples/                 # 4 cas + README (dont LangGraph)
+├── docs/demo.md              # flux IDC (ASCII / Mermaid)
 ├── benchmarks/               # bench_mock.py + results/
-└── .github/                  # CI, templates
+├── community/                # good-first-issues prêts à coller
+└── .github/                  # CI, publish-pypi, templates
 ```
 
 ## Paramètres
@@ -163,16 +203,23 @@ idc-wrapper/
 
 Heuristique VOI simple : `estimated_gain > cost_per_token * 50 * risk`.
 
+## Roadmap
+
+Priorités v0.3 / v0.4 (PyPI live, crates.io, bench LLM réel, plus d’adapters) :
+**[ROADMAP.md](./ROADMAP.md)**.
+
 ## Communauté
 
-- Contribuer : [CONTRIBUTING.md](./CONTRIBUTING.md) (FR + EN)
+- Contribuer : [CONTRIBUTING.md](./CONTRIBUTING.md) (FR + EN) — active aussi **Discussions** (Settings → Features)
 - Conduite : [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md)
 - Sécurité : [SECURITY.md](./SECURITY.md)
 - Changelog : [CHANGELOG.md](./CHANGELOG.md)
+- Good first issues : [community/GOOD_FIRST_ISSUES.md](./community/GOOD_FIRST_ISSUES.md)
 - Issues / PR : templates dans `.github/`
+- Publication PyPI : [PUBLISHING.md](./PUBLISHING.md)
 
-Idées bienvenues : VOI plus fine, persistance disque du journal, crate `lib` Rust,
-adapter Agents SDK, calibrage dynamique du seuil — **avec mesures
+Idées bienvenues : VOI plus fine, persistance disque du journal, publish crates.io,
+adapter Agents SDK réel, calibrage dynamique du seuil — **avec mesures
 reproductibles**, pas de chiffres inventés. (Adaptateur LangGraph-shaped : v0.2.0.)
 
 ## Licence & auteur
@@ -182,4 +229,4 @@ reproductibles**, pas de chiffres inventés. (Adaptateur LangGraph-shaped : v0.2
 **Micaël Lanoix** — continuité des travaux sur l’ADN numérique des images
 (PNGIA / Pixel 4D) et l’Effondrement Décisionnel Irréversible.
 
-Citation : voir [`CITATION.cff`](./CITATION.cff).
+Citation : voir [`CITATION.cff`](./CITATION.cff). Livre : [Amazon FR](https://www.amazon.fr/dp/B0HMX1CY6R).
