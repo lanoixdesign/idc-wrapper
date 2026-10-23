@@ -1,0 +1,3 @@
+# Dev / CI : aucune dépendance runtime — l'agent IDC est stdlib-only.
+# Ce fichier existe pour documenter l'intention et accueillir de futurs outils.
+# Exemple futur : pytest, ruff (non requis aujourd'hui).
