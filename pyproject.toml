@@ -12,12 +12,25 @@ authors = [{ name = "Micaël Lanoix" }]
 requires-python = ">=3.10"
 keywords = ["idc", "agents", "llm", "finitude", "stop-rule", "agi", "langgraph"]
 classifiers = [
+  "Development Status :: 4 - Beta",
   "License :: OSI Approved :: MIT License",
   "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
   "Topic :: Scientific/Engineering :: Artificial Intelligence",
+  "Intended Audience :: Developers",
 ]
 # stdlib only for the agent runtime
 dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/lanoixdesign/idc-wrapper"
+Repository = "https://github.com/lanoixdesign/idc-wrapper"
+Issues = "https://github.com/lanoixdesign/idc-wrapper/issues"
+Changelog = "https://github.com/lanoixdesign/idc-wrapper/blob/main/CHANGELOG.md"
+Documentation = "https://github.com/lanoixdesign/idc-wrapper#readme"
 
 [project.optional-dependencies]
 dev = []
