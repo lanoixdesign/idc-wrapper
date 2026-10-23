@@ -24,6 +24,7 @@ jobs:
           PYTHONPATH=python python examples/01_support_client/run_mock.py
           PYTHONPATH=python python examples/02_code_assistant/run_mock.py
           PYTHONPATH=python python examples/03_research_synth/run_mock.py
+          PYTHONPATH=python python examples/04_langgraph/run_mock.py
 
   rust:
     name: Rust cargo check

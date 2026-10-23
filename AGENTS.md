@@ -8,11 +8,12 @@ This repository is designed so **any agent** (Cursor, Claude Code, Codex, OpenAI
 2. Prefer the **protocol** in `schema/idc-protocol.json` over hardcoding heuristics.
 3. If you need an executable loop:
    - **Python package** (stdlib): `python/idc/` — journal, agent, mock backend
+   - **LangGraph-shaped adapter** (stdlib): `python/idc/langgraph_adapter.py` — `IdcGraphRunner` sans langgraph ; `compile_langgraph()` si `pip install idc-wrapper[langgraph]`
    - **Python CLI**: `PYTHONPATH=python python3 python/idc_agent.py --mock support_client "task"` (no API key) or with `OPENAI_API_KEY`
    - **Rust** (OpenAI-compatible HTTP): `cargo run --release` (see README)
 4. Always keep an **append-only journal** of commitments; never rewrite past entries.
 5. Prefer **admit ignorance** when resource is low or confidence is weak — inventing is more expensive under IDC.
-6. For demos of Sans/Avec IDC, run `examples/*/run_mock.py`. For measured mock metrics, read `PERFORMANCE.md` (do not invent FLOPS/survival rates).
+6. For demos of Sans/Avec IDC, run `examples/*/run_mock.py` (incl. `04_langgraph`). For measured mock metrics, read `PERFORMANCE.md` (do not invent FLOPS/survival rates).
 
 ## Contract (minimal)
 
@@ -40,3 +41,9 @@ Copy `agents/skills/idc/` into your skills folder, or `@` / load the skill by na
 ## Interop
 
 Agents may wrap any chat model that speaks OpenAI Chat Completions (`OPENAI_API_KEY`, optional `OPENAI_BASE_URL`, `OPENAI_MODEL`). Local servers (Ollama, vLLM) work if they expose that API. For offline demos, use `--mock` scenarios in `python/idc/mock_backend.py`.
+
+## LangGraph
+
+- Sans dépendance : `from idc.langgraph_adapter import IdcGraphRunner` puis `runner.run(task)` (boucle nœud/état).
+- Avec LangGraph : `pip install idc-wrapper[langgraph]` puis `compile_langgraph(backend=...)`.
+- Démo : `PYTHONPATH=python python3 examples/04_langgraph/run_mock.py`.

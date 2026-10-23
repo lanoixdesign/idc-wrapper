@@ -33,6 +33,7 @@ reproductible — voir [PERFORMANCE.md](./PERFORMANCE.md).
 - [Quickstart Python](#quickstart-python)
 - [Quickstart Rust](#quickstart-rust)
 - [Exemples](#exemples)
+- [Adaptateur LangGraph](#adaptateur-langgraph)
 - [Performance (mock)](#performance-mock)
 - [Structure](#structure)
 - [Paramètres](#paramètres)
@@ -48,6 +49,7 @@ Lis d’abord **[AGENTS.md](./AGENTS.md)**.
 | [`agents/skills/idc/SKILL.md`](./agents/skills/idc/SKILL.md) | Skill / recipe portable |
 | [`schema/idc-protocol.json`](./schema/idc-protocol.json) | Contrat machine-readable |
 | [`python/idc/`](./python/idc/) | Package référence (journal, agent, mock) |
+| [`python/idc/langgraph_adapter.py`](./python/idc/langgraph_adapter.py) | Adaptateur LangGraph-shaped (optionnel) |
 | [`python/idc_agent.py`](./python/idc_agent.py) | CLI (OpenAI-compatible ou `--mock`) |
 | [`src/main.rs`](./src/main.rs) | Implémentation Rust |
 | [`examples/`](./examples/) | Cas Sans IDC / Avec IDC |
@@ -89,15 +91,36 @@ Par défaut : `https://api.openai.com/v1/chat/completions`, modèle `gpt-4o-mini
 
 ## Exemples
 
-Trois cas concrets avec narration **Sans IDC / Avec IDC / Bénéfice** et scripts mock :
+Cas concrets avec narration **Sans IDC / Avec IDC / Bénéfice** et scripts mock :
 
 | # | Dossier | Idée |
 |---|---------|------|
 | 01 | [`examples/01_support_client`](./examples/01_support_client/) | Support livraison |
 | 02 | [`examples/02_code_assistant`](./examples/02_code_assistant/) | Fix bug + stop avant API fantôme |
 | 03 | [`examples/03_research_synth`](./examples/03_research_synth/) | Synthèse bornée, pas de citation inventée |
+| 04 | [`examples/04_langgraph`](./examples/04_langgraph/) | Boucle nœud/état style LangGraph + arrêt IDC |
 
 Voir [`examples/README.md`](./examples/README.md).
+
+## Adaptateur LangGraph
+
+Boucle **nœud / état** compatible LangGraph, **sans dépendance obligatoire** :
+
+```bash
+# démo mock (stdlib)
+PYTHONPATH=python python3 examples/04_langgraph/run_mock.py
+
+# optionnel : vrai StateGraph
+pip install 'idc-wrapper[langgraph]'   # ou : pip install langgraph
+```
+
+```python
+from idc.langgraph_adapter import IdcGraphRunner, compile_langgraph
+# IdcGraphRunner : toujours disponible
+# compile_langgraph(...) : ImportError clair si langgraph absent
+```
+
+Détails : [`examples/04_langgraph/README.md`](./examples/04_langgraph/README.md).
 
 ## Performance (mock)
 
@@ -119,12 +142,12 @@ Détail, caveats, et distinction **hypothèse livre vs démontré par le code** 
 idc-wrapper/
 ├── AGENTS.md                 # contrat pour runtimes agents
 ├── PERFORMANCE.md            # mesures mock honnêtes
-├── python/idc/               # package (journal, agent, mock)
+├── python/idc/               # package (journal, agent, mock, langgraph_adapter)
 ├── python/idc_agent.py       # CLI
 ├── src/main.rs               # Rust
 ├── schema/idc-protocol.json
 ├── agents/skills/idc/SKILL.md
-├── examples/                 # 3 cas + README
+├── examples/                 # 4 cas + README (dont LangGraph)
 ├── benchmarks/               # bench_mock.py + results/
 └── .github/                  # CI, templates
 ```
@@ -149,8 +172,8 @@ Heuristique VOI simple : `estimated_gain > cost_per_token * 50 * risk`.
 - Issues / PR : templates dans `.github/`
 
 Idées bienvenues : VOI plus fine, persistance disque du journal, crate `lib` Rust,
-adapters LangGraph / Agents SDK, calibrage dynamique du seuil — **avec mesures
-reproductibles**, pas de chiffres inventés.
+adapter Agents SDK, calibrage dynamique du seuil — **avec mesures
+reproductibles**, pas de chiffres inventés. (Adaptateur LangGraph-shaped : v0.2.0.)
 
 ## Licence & auteur
 

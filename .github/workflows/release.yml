@@ -1,0 +1,45 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag SemVer (ex. v0.2.0)"
+        required: true
+        default: "v0.2.0"
+      name:
+        description: "Titre de la release"
+        required: true
+        default: "IDC Wrapper 0.2.0"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Create tag and GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ inputs.tag }}
+          REL_NAME: ${{ inputs.name }}
+        run: |
+          set -euo pipefail
+          if git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "Tag $TAG existe déjà — on met à jour / crée la release si besoin."
+          else
+            git tag -a "$TAG" -m "$REL_NAME"
+            git push origin "$TAG"
+          fi
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "Release $TAG existe déjà."
+          else
+            gh release create "$TAG" \
+              --title "$REL_NAME" \
+              --notes-file CHANGELOG.md \
+              --latest
+          fi
