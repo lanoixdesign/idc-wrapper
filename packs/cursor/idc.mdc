@@ -1,0 +1,29 @@
+---
+description: IDC — Effondrement Décisionnel Irréversible (finitude, journal, arrêt)
+globs:
+alwaysApply: false
+---
+
+# IDC Wrapper
+
+Applique le protocole IDC pour toute délibération agent coûteuse.
+
+## Charger
+
+- Skill : `agents/skills/idc/SKILL.md`
+- Contrat : `schema/idc-protocol.json`
+- Guide runtime : `AGENTS.md`
+
+## Règles
+
+1. Budget `R` fini ; chaque étape a un coût.
+2. Journal **append-only** — jamais réécrire le passé.
+3. Arrêt quand valeur marginale < coût marginal (ou seuil critique).
+4. Collapse : réponse finale **ou** « je ne sais pas ».
+5. Pas de chiffres inventés (FLOPS, win-rates) ; mock = `PERFORMANCE.md`.
+
+## Exécutable
+
+```bash
+PYTHONPATH=python python3 python/idc_agent.py --mock support_client "…"
+```
