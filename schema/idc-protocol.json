@@ -6,7 +6,7 @@
   "type": "object",
   "required": ["version", "resource", "critical_threshold", "journal", "stop_rule"],
   "properties": {
-    "version": { "type": "string", "const": "0.1.0" },
+    "version": { "type": "string", "const": "0.2.0" },
     "resource": {
       "type": "number",
       "minimum": 0,
