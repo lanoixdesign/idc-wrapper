@@ -7,10 +7,12 @@ This repository is designed so **any agent** (Cursor, Claude Code, Codex, OpenAI
 1. Load `agents/skills/idc/SKILL.md` when the task involves AGI finitude, decision stopping, hallucination cost, or IDC case studies.
 2. Prefer the **protocol** in `schema/idc-protocol.json` over hardcoding heuristics.
 3. If you need an executable loop:
+   - **Python package** (stdlib): `python/idc/` — journal, agent, mock backend
+   - **Python CLI**: `PYTHONPATH=python python3 python/idc_agent.py --mock support_client "task"` (no API key) or with `OPENAI_API_KEY`
    - **Rust** (OpenAI-compatible HTTP): `cargo run --release` (see README)
-   - **Python** (stdlib + urllib, OpenAI-compatible): `python python/idc_agent.py "your task"`
 4. Always keep an **append-only journal** of commitments; never rewrite past entries.
 5. Prefer **admit ignorance** when resource is low or confidence is weak — inventing is more expensive under IDC.
+6. For demos of Sans/Avec IDC, run `examples/*/run_mock.py`. For measured mock metrics, read `PERFORMANCE.md` (do not invent FLOPS/survival rates).
 
 ## Contract (minimal)
 
@@ -29,6 +31,7 @@ This repository is designed so **any agent** (Cursor, Claude Code, Codex, OpenAI
 - **Don't** treat backtracking as free.
 - **Don't** invent facts when uncertainty is cheaper to admit.
 - **Don't** claim IDC is empirically proven; treat it as a model + test protocol.
+- **Don't** invent benchmark numbers; regenerate via `benchmarks/bench_mock.py`.
 
 ## Skill install (Cursor / Grok Bot style)
 
@@ -36,4 +39,4 @@ Copy `agents/skills/idc/` into your skills folder, or `@` / load the skill by na
 
 ## Interop
 
-Agents may wrap any chat model that speaks OpenAI Chat Completions (`OPENAI_API_KEY`, optional `OPENAI_BASE_URL`, `OPENAI_MODEL`). Local servers (Ollama, vLLM) work if they expose that API.
+Agents may wrap any chat model that speaks OpenAI Chat Completions (`OPENAI_API_KEY`, optional `OPENAI_BASE_URL`, `OPENAI_MODEL`). Local servers (Ollama, vLLM) work if they expose that API. For offline demos, use `--mock` scenarios in `python/idc/mock_backend.py`.
