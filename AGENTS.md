@@ -14,7 +14,7 @@ This repository is designed so **any agent** (Cursor, Claude Code, Codex, OpenAI
    - **Packs**: `packs/cursor/`, `packs/claude/`, `packs/openai-agents/` (snippets / stub)
 4. Always keep an **append-only journal** of commitments; never rewrite past entries.
 5. Prefer **admit ignorance** when resource is low or confidence is weak — inventing is more expensive under IDC.
-6. For demos of Sans/Avec IDC, run `examples/*/run_mock.py` (incl. `04_langgraph`). For measured mock metrics, read `PERFORMANCE.md` (do not invent FLOPS/survival rates).
+6. For demos of Sans/Avec IDC, run `examples/*/run_mock.py` (incl. `04_langgraph`, `05_swarm_agents` with `--idc`/`--no-idc`). For measured mock metrics, read `PERFORMANCE.md` (do not invent FLOPS/survival rates).
 
 ## Contract (minimal)
 

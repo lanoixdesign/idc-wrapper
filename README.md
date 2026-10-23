@@ -123,6 +123,7 @@ Cas concrets avec narration **Sans IDC / Avec IDC / Bénéfice** et scripts mock
 | 02 | [`examples/02_code_assistant`](./examples/02_code_assistant/) | Fix bug + stop avant API fantôme |
 | 03 | [`examples/03_research_synth`](./examples/03_research_synth/) | Synthèse bornée, pas de citation inventée |
 | 04 | [`examples/04_langgraph`](./examples/04_langgraph/) | Boucle nœud/état style LangGraph + arrêt IDC |
+| 05 | [`examples/05_swarm_agents`](./examples/05_swarm_agents/) | Essaim multi-agents, toggle `--idc` / `--no-idc` |
 
 Voir [`examples/README.md`](./examples/README.md). Flux ASCII/Mermaid : [`docs/demo.md`](./docs/demo.md).
 

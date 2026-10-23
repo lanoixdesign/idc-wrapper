@@ -8,6 +8,7 @@ et ce projet adhère au [Versionnage Sémantique](https://semver.org/lang/fr/).
 ## [Unreleased]
 
 ### Ajouté
+- Exemple `examples/05_swarm_agents/` : essaim (chercheur / critique / rédacteur / coordonnateur), pool `R` + journal partagés, CLI `--idc` / `--no-idc` (env `IDC=1|0`), smoke CI étendu.
 - `ROADMAP.md` (v0.3 PyPI/crates.io ; v0.4 bench LLM réel + adapters).
 - `PUBLISHING.md` + `.github/workflows/publish-pypi.yml` (OIDC trusted publishing).
 - Packs agents : `packs/cursor/`, `packs/claude/`, `packs/openai-agents/` (stub + interface).
