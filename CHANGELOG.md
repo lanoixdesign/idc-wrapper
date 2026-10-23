@@ -8,6 +8,7 @@ et ce projet adhère au [Versionnage Sémantique](https://semver.org/lang/fr/).
 ## [Unreleased]
 
 ### Ajouté
+- Mode **live Groq** pour l'essaim : `python/idc/groq_backend.py` (stdlib, `GROQ_API_KEY`) + `examples/05_swarm_agents/run_live.py` (`--question`, `--idc`/`--no-idc`, heuristique VOI documentée) ; `run_mock.py` inchangé.
 - Exemple `examples/05_swarm_agents/` : essaim (chercheur / critique / rédacteur / coordonnateur), pool `R` + journal partagés, CLI `--idc` / `--no-idc` (env `IDC=1|0`), smoke CI étendu.
 - `ROADMAP.md` (v0.3 PyPI/crates.io ; v0.4 bench LLM réel + adapters).
 - `PUBLISHING.md` + `.github/workflows/publish-pypi.yml` (OIDC trusted publishing).
