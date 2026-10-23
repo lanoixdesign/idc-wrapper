@@ -14,10 +14,16 @@ et ce projet adhère au [Versionnage Sémantique](https://semver.org/lang/fr/).
 - Micro-benchmarks mock `benchmarks/bench_mock.py` + `benchmarks/results/latest.json`.
 - `PERFORMANCE.md` généré depuis les mesures réelles du mock (pas de chiffres inventés).
 - `CITATION.cff`, `pyproject.toml`.
+- **Adaptateur LangGraph-shaped** `python/idc/langgraph_adapter.py` :
+  - `IdcGraphRunner` / `deliberation_node` / `should_continue` (stdlib, sans dépendance).
+  - `compile_langgraph()` pour un vrai `StateGraph` si `langgraph` est installé
+    (`pip install idc-wrapper[langgraph]`) ; sinon `ImportError` explicite.
+  - Exemple `examples/04_langgraph/` (mock, aucune clé API).
+  - Tests `test_langgraph_adapter.py` (CI verte sans langgraph).
 
 ### Modifié
-- README enrichi (badges, TOC, quickstart, liens perf / exemples / communauté).
-- Version package / Cargo → 0.2.0.
+- README enrichi (badges, TOC, quickstart, liens perf / exemples / communauté / LangGraph).
+- Version package / Cargo / schéma → 0.2.0.
 
 ## [0.1.0] — 2026-10
 
