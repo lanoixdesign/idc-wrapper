@@ -1,6 +1,6 @@
 # Exemples IDC
 
-Quatre cas concrets **Sans IDC / Avec IDC**, chacun avec un script mock exécutable
+Cinq cas concrets **Sans IDC / Avec IDC**, chacun avec un script mock exécutable
 (aucune clé API).
 
 | # | Dossier | Scénario |
@@ -9,6 +9,7 @@ Quatre cas concrets **Sans IDC / Avec IDC**, chacun avec un script mock exécuta
 | 02 | [`02_code_assistant`](./02_code_assistant/) | Assistant code / bug |
 | 03 | [`03_research_synth`](./03_research_synth/) | Synthèse de recherche |
 | 04 | [`04_langgraph`](./04_langgraph/) | Adaptateur LangGraph-shaped |
+| 05 | [`05_swarm_agents`](./05_swarm_agents/) | Essaim multi-agents (R + journal partagés) |
 
 ## Lancer tous les exemples
 
@@ -18,6 +19,8 @@ python examples/01_support_client/run_mock.py
 python examples/02_code_assistant/run_mock.py
 python examples/03_research_synth/run_mock.py
 python examples/04_langgraph/run_mock.py
+python examples/05_swarm_agents/run_mock.py
+# ou : --idc / --no-idc
 ```
 
 Chaque script affiche côte à côte : croissance du journal, décroissance de `R`,

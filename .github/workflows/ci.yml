@@ -25,6 +25,9 @@ jobs:
           PYTHONPATH=python python examples/02_code_assistant/run_mock.py
           PYTHONPATH=python python examples/03_research_synth/run_mock.py
           PYTHONPATH=python python examples/04_langgraph/run_mock.py
+          PYTHONPATH=python python examples/05_swarm_agents/run_mock.py
+          PYTHONPATH=python python examples/05_swarm_agents/run_mock.py --idc
+          PYTHONPATH=python python examples/05_swarm_agents/run_mock.py --no-idc
 
   rust:
     name: Rust cargo check
