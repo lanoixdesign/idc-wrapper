@@ -59,5 +59,48 @@ Aucune clé API, aucun réseau. Attendu typique (mock déterministe) :
 | `--no-idc` | ~8–12 | ping-pong + SLA/CVE inventés, `R` basse |
 | `--idc` | ~4 | arrêt après synthèse utile, `R` préservée |
 
+
+## Mode live Groq
+
+Pose une **vraie question** à l'essaim via l'API Groq (OpenAI-compatible) et
+compare Sans / Avec IDC. Le mock CI (`run_mock.py`) reste inchangé.
+
+**Prérequis** : variable d'environnement `GROQ_API_KEY` (jamais hardcodée).
+Modèle par défaut : `openai/gpt-oss-20b` (production Groq, oct. 2026 ;
+`llama-3.3-70b-versatile` est enterprise / déprécié sur free+developer — passez
+`--model` si besoin).
+
+```bash
+# depuis la racine du dépôt — les deux modes (défaut)
+export GROQ_API_KEY=…   # https://console.groq.com/keys
+PYTHONPATH=python python3 examples/05_swarm_agents/run_live.py \
+  --question "Résume les risques d'un essaim multi-agents sans règle d'arrêt"
+
+# un seul mode
+PYTHONPATH=python python3 examples/05_swarm_agents/run_live.py \
+  --question "…" --idc
+PYTHONPATH=python python3 examples/05_swarm_agents/run_live.py \
+  --question "…" --no-idc
+
+# modèle / rounds
+PYTHONPATH=python python3 examples/05_swarm_agents/run_live.py \
+  --question "…" --model openai/gpt-oss-120b \
+  --max-rounds-idc 3 --max-rounds-baseline 5
+```
+
+| Mode | Comportement |
+|------|----------------|
+| `--no-idc` | `max_rounds` plus haut, **pas** de stop VOI (jusqu'à R critique) |
+| `--idc` | stop VOI sur le pool partagé (comme le mock) |
+| (défaut) | enchaîne les deux runs pour comparaison |
+
+**Gain VOI (heuristique documentée)** — dans `python/idc/groq_backend.py` :
+base décroissante par tour × nouveauté lexicale × facteur de longueur (pénalise reformulations et micro-chunks).
+Ce n'est **pas** une preuve empirique de gains IDC en production ; c'est une
+règle pédagogique alignée sur le seuil `cost_per_token * 50` du dépôt.
+
+Métriques affichées : étapes, `R` finale, tokens (approx + usage API Groq si
+disponible), arrêt anticipé, journal partagé, réponse.
+
 > **English** — Deterministic mock swarm demo (shared R + shared journal).
 > Not a production multi-agent benchmark. See [PERFORMANCE.md](../../PERFORMANCE.md).
