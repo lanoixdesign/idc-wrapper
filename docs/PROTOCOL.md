@@ -99,6 +99,7 @@ en essaim), même prompt de base, mêmes graines.
 | `r_seule` | ✔ | – | ablation |
 | `voi_seul` | – | ✔ | ablation |
 | `idc` | ✔ | ✔ | Avec IDC complet |
+| `un_appel` *(amendement 1)* | – | – | contrôle : **un seul appel** (essaim : 1 round de 4 rôles), sans boucle |
 
 Paramètres (identiques à `idc.agent.IdcAgent`) : `R=100` (essaim : 200 partagée),
 seuil critique 15, `cost_per_token=0.8` par mot produit (essaim : plafonné à 35/tour comme
@@ -182,9 +183,26 @@ Gain VOI = `GroqBackend.gain_for_step` (heuristique lexicale **non validée**).
 6. **Petits échantillons** : 81 items, 1 répétition au pilote → IC larges.
 7. **Validité externe** : tâches courtes, en français, construites par nous ; la
    vérification automatique par alias (ex. chiffre « 2 ») est grossière.
-8. **Non-déterminisme** de l'API (même avec `seed`) ; versions de modèles côté
+8. **Fuite de l'avis de budget** : dans les conditions à R fini, le texte de l'avis de
+   budget peut « contaminer » la réponse (observé au pilote : à la question « à quoi
+   pensais-je ? », gpt-oss-20b a décrit la contrainte R au lieu de dire que c'est
+   inconnaissable ; le juge l'a classé hallucination). Ce biais joue *contre* l'IDC
+   sur `impossible` et est signalé, pas corrigé a posteriori.
+9. **Non-déterminisme** de l'API (même avec `seed`) ; versions de modèles côté
    fournisseur qui peuvent changer sans préavis (on journalise l'horodatage).
 
 ## 10. Journal des amendements
 
 - 2026-10-24 — v1 publiée (avant analyse du pilote).
+- 2026-10-24 — **Amendement 1** (pendant le pilote, après inspection de quelques sorties
+  brutes, avant toute analyse statistique) : ajout de la condition de contrôle `un_appel`.
+  Motif : dans `sans_idc`, la boucle de révision elle-même peut pousser un modèle à
+  « compléter » une réponse (ex. inventer l'intrigue d'un roman qu'il venait de déclarer
+  inexistant). Sans ce contrôle, un gain de l'IDC vs `sans_idc` pourrait n'être qu'un gain
+  « moins de boucle » et non un effet propre de R/VOI. Les hypothèses H1–H7 restent
+  formulées vs `sans_idc` ; la comparaison `idc` vs `un_appel` est ajoutée comme analyse
+  secondaire déclarée.
+- 2026-10-24 — **Note opérationnelle** (pas un changement d'hypothèse) : le pilote a été
+  stoppé par les quotas Groq gratuits (TPD 200 000 tokens/jour pour gpt-oss-20b et le juge
+  gpt-oss-120b, OTPM 1 000 pour qwen3.8-27b, TPM 6 000 pour allam-2-7b). Le juge note en
+  priorité les items non répondables, puis complète les paires de conditions par tâche.
