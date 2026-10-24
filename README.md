@@ -42,6 +42,7 @@ reproductible — voir [PERFORMANCE.md](./PERFORMANCE.md).
 - [Adaptateur LangGraph](#adaptateur-langgraph)
 - [Packs agents](#packs-agents)
 - [Performance (mock)](#performance-mock)
+- [Recherche & benchmarks live](#recherche--benchmarks-live)
 - [Structure](#structure)
 - [Paramètres](#paramètres)
 - [Roadmap](#roadmap)
@@ -170,6 +171,35 @@ Dernière agrégation typique (régénérer localement pour confirmer) :
 
 Détail, caveats, et distinction **hypothèse livre vs démontré par le code** :
 **[PERFORMANCE.md](./PERFORMANCE.md)**. Aucun claim de perf LLM réel ici.
+
+## Recherche & benchmarks live
+
+Pour passer de l'hypothèse à la mesure, le dépôt contient un **protocole pré-enregistré**
+et un **harness reproductible** sur de vrais modèles (API Groq) :
+
+- **[docs/PROTOCOL.md](./docs/PROTOCOL.md)** — questions, hypothèses falsifiables H1–H7,
+  6 axes (efficacité, calibration de l'arrêt, robustesse multi-étapes, essaim à `R`
+  partagée, traçabilité, honnêteté/abstention), conditions `sans_idc` / `r_seule` /
+  `voi_seul` / `idc` + contrôle `un_appel` (amendement 1), juge aveugle, statistiques (bootstrap par tâche, McNemar),
+  menaces à la validité, plan longue durée.
+- **[benchmarks/](./benchmarks/README.md)** — 81 tâches versionnées
+  (`tasks/idc_tasks_v1.jsonl`), runner avec reprise et gestion des quotas,
+  juge, analyse → **[benchmarks/results/live/REPORT.md](./benchmarks/results/live/REPORT.md)**.
+
+```bash
+export GROQ_API_KEY=...
+python3 benchmarks/run_bench.py --models allam-2-7b qwen/qwen3.8-27b openai/gpt-oss-20b \
+  --conditions sans_idc idc un_appel r_seule voi_seul --repeats 10
+python3 benchmarks/judge_bench.py && python3 benchmarks/analyze_bench.py
+```
+
+> **État (24/10/2026) : passe pilote partielle**, interrompue par les quotas gratuits Groq
+> (3 modèles sujets, 1 répétition, conditions `sans_idc` / `idc` / `un_appel` ; ablations
+> `r_seule` / `voi_seul` pas encore lancées ; une partie des runs n'est pas encore jugée).
+> Les signaux du pilote (moins de tokens et de boucles avec IDC, effet sur les
+> hallucinations non significatif à ce stade) **ne permettent pas de conclure** à un gain
+> général : voir le rapport et ses intervalles. La passe longue durée reprend là où elle
+> s'est arrêtée (reprise par `run_id`).
 
 ## Structure
 
