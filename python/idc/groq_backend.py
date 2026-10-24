@@ -85,6 +85,7 @@ class GroqBackend:
             headers={
                 "Authorization": f"Bearer {self.api_key}",
                 "Content-Type": "application/json",
+                "User-Agent": "idc-wrapper/0.2 (+https://github.com/lanoixdesign/idc-wrapper)",
             },
             method="POST",
         )
