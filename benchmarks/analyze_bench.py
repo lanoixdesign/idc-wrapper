@@ -261,6 +261,11 @@ def main(argv=None) -> int:
     L.append("- Heuristique VOI lexicale non validée ; pénalise les réponses courtes.\n"
              "- Juge de la même famille qu'un modèle testé ; règle ABSTAIN pour le message IDC.\n"
              "- 1 répétition au pilote → IC larges ; quotas gratuits Groq ; tâches construites par nous.\n"
+             "- **Couverture du juge partielle et non aléatoire** quand le quota du juge s'épuise : "
+             "les items non répondables sont jugés en priorité ; les colonnes issues du juge portent "
+             "alors sur un sous-ensemble (voir les n) et ne sont pas comparables aux colonnes auto.\n"
+             "- **Comparaisons multiples** : ~27 tests McNemar non corrigés ; un p < 0,05 isolé "
+             "n'est pas une preuve (pré-enregistré : seuls H1–H7, à confirmer en passe longue).\n"
              "- Voir `docs/PROTOCOL.md` §9 pour la liste complète.\n")
     report.write_text("\n".join(L), encoding="utf-8")
     print(f"[rapport] {report} ({len(runs)} runs, {sum(1 for r in runs if r['_o']['judged'])} jugés)")
