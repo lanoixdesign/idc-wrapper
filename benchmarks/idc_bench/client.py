@@ -36,6 +36,7 @@ class BenchHTTPError(RuntimeError):
     pass
 
 
+_ORG_RE = re.compile(r"org_[A-Za-z0-9]+")
 _RETRY_IN_RE = re.compile(r"try again in ((?:\d+h)?(?:\d+m)?(?:[\d.]+s)?)", re.I)
 
 
@@ -65,8 +66,9 @@ class BenchGroqBackend(GroqBackend):
     """GroqBackend + robustesse rate-limit. Hérite de ``gain_for_step``."""
 
     reasoning_effort: str | None = None
-    max_retries: int = 8
-    max_wait_s: float = 120.0
+    max_retries: int = 30
+    max_wait_s: float = 30.0
+    day_quota_wait_s: float = 600.0  # au-delà : quota journalier → arrêt propre
     seed: int | None = None
     json_mode: bool = False
     calls_log: list[CallInfo] = field(default_factory=list)
@@ -131,11 +133,17 @@ class BenchGroqBackend(GroqBackend):
                             wait = max(wait, float(ra))
                         except ValueError:
                             pass
-                    if ("per day" in low or "(tpd)" in low or "(rpd)" in low) and wait > self.max_wait_s:
+                    if ("per day" in low or "(tpd)" in low or "(rpd)" in low) and wait > self.day_quota_wait_s:
                         raise QuotaExhausted(f"{self.model}: quota journalier atteint ({detail[:200]})") from e
                     if attempt > self.max_retries:
                         raise QuotaExhausted(f"{self.model}: 429 persistant ({detail[:200]})") from e
-                    time.sleep(min(max(wait, 2.0 * attempt), self.max_wait_s) + 0.5)
+                    daily = "per day" in low or "(tpd)" in low or "(rpd)" in low
+                    if wait <= 0:
+                        wait = min(2.0 * attempt, self.max_wait_s)  # pas d'indication : backoff
+                    sl = min(wait, self.day_quota_wait_s if daily else self.max_wait_s) + 0.3
+                    print(f"[429] {self.model} tentative {attempt} : pause {sl:.1f}s — {_ORG_RE.sub('org_…', detail)[:400]}",
+                          file=sys.stderr, flush=True)
+                    time.sleep(sl)
                     continue
                 if e.code == 413 and "request too large" in detail.lower():
                     raise BenchHTTPError(f"HTTP 413: {detail[:200]}") from e

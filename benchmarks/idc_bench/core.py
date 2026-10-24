@@ -42,6 +42,7 @@ class Condition:
     finite_r: bool  # ressource finie + notice de budget dans le prompt
     voi: bool  # règle d'arrêt VOI + politique d'aveu d'ignorance
     description: str
+    single_pass: bool = False  # contrôle : 1 pas (essaim : 1 round de 4 rôles)
 
 
 CONDITIONS: dict[str, Condition] = {
@@ -49,8 +50,11 @@ CONDITIONS: dict[str, Condition] = {
     "r_seule": Condition("r_seule", True, False, "Ablation : ressource finie R (+ notice budget), pas de VOI."),
     "voi_seul": Condition("voi_seul", False, True, "Ablation : règle VOI + aveu d'ignorance, R illimitée."),
     "idc": Condition("idc", True, True, "Avec IDC complet : R finie + VOI + aveu d'ignorance."),
+    # Ajout amendement 2026-10-24 (voir PROTOCOL §10) : contrôle « un seul appel »,
+    # pour distinguer l'effet IDC de l'effet de la boucle de révision elle-même.
+    "un_appel": Condition("un_appel", False, False, "Contrôle : un seul appel, sans boucle ni IDC.", True),
 }
-CONDITION_ORDER = ["sans_idc", "idc", "r_seule", "voi_seul"]
+CONDITION_ORDER = ["sans_idc", "idc", "un_appel", "r_seule", "voi_seul"]
 
 
 @dataclass
@@ -207,7 +211,8 @@ def _run_single(backend, task: dict, cond: Condition, p: Params) -> dict:
     stop_reason = "cap"
     n0 = len(backend.calls_log)
     mt = _max_tokens(backend.model, p.max_tokens_single, p)
-    while step < p.max_steps_single:
+    max_steps = 1 if cond.single_pass else p.max_steps_single
+    while step < max_steps:
         if resource <= p.critical_threshold:
             stop_reason = "resource"
             break
@@ -243,7 +248,7 @@ def _run_single(backend, task: dict, cond: Condition, p: Params) -> dict:
         if cond.voi and not still_worth_it(gain, resource if resource != INF else 1e9, p):
             stop_reason = "voi"
             break
-    return _finish(answers, journal, cond, step, p.max_steps_single, stop_reason, any_useful,
+    return _finish(answers, journal, cond, step, max_steps, stop_reason, any_useful,
                    max_gain, resource, backend, n0, p)
 
 
@@ -253,7 +258,7 @@ def _run_swarm(backend, task: dict, cond: Condition, p: Params) -> dict:
     r_total = p.resource_swarm if cond.finite_r else INF
     resource = r_total
     contributions: list[tuple[str, str]] = []
-    max_steps = p.max_rounds_swarm * len(ROLES)
+    max_steps = (1 if cond.single_pass else p.max_rounds_swarm) * len(ROLES)
     step = 0
     any_useful, max_gain = False, 0.0
     stop_reason = "cap"

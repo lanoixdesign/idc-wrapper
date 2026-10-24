@@ -58,8 +58,12 @@ def main(argv=None) -> int:
     judged = {j["run_id"] for j in read_jsonl(out) if j.get("judge_model") in (args.judge_model, "rule")}
     cache = {j["answer_key"]: j for j in read_jsonl(out) if j.get("judge_model") == args.judge_model}
     prio = {c: i for i, c in enumerate(CONDITION_ORDER)}
+    # Priorité : items non répondables d'abord (pas de vérification automatique possible),
+    # puis par tâche pour compléter les paires de conditions, conditions principales d'abord.
     todo = sorted([r for r in runs if r["run_id"] not in judged],
-                  key=lambda r: (r.get("repeat", 0), prio.get(r["condition"], 9)))
+                  key=lambda r: (r.get("repeat", 0), r["expected_behavior"] == "answer",
+                                 min(prio.get(r["condition"], 9), 2), r["task_id"],
+                                 prio.get(r["condition"], 9)))
     print(f"[juge] {len(todo)} runs à juger ({len(judged)} déjà jugés)", flush=True)
     backend = BenchGroqBackend.for_model(args.judge_model, temperature=0.0, json_mode=True)
     calls = 0
