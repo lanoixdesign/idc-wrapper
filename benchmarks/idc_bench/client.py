@@ -123,7 +123,7 @@ class BenchGroqBackend(GroqBackend):
                 latency = time.monotonic() - t0
                 break
             except urllib.error.HTTPError as e:
-                detail = e.read().decode("utf-8", errors="replace")[:600]
+                detail = _ORG_RE.sub("org_…", e.read().decode("utf-8", errors="replace")[:600])
                 if e.code == 429:
                     low = detail.lower()
                     wait = _parse_duration(m.group(1)) if (m := _RETRY_IN_RE.search(detail)) else 0.0
