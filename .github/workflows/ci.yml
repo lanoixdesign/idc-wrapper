@@ -17,6 +17,8 @@ jobs:
           python-version: "3.12"
       - name: Unit tests (mock, no API keys)
         run: PYTHONPATH=python python -m unittest discover -s python/idc -v
+      - name: Benchmark harness tests (mock, no network)
+        run: python -m unittest discover -s benchmarks/tests -v
       - name: Mock benchmark
         run: PYTHONPATH=python python benchmarks/bench_mock.py
       - name: Examples smoke
