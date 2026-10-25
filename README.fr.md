@@ -1,6 +1,6 @@
 # IDC Wrapper — README (français)
 
-> 🇬🇧 English / README principal : [README.md](./README.md) · Protocole : [FR](./docs/PROTOCOL.md) · [EN](./docs/PROTOCOL.en.md)
+🌐 **Language / Langue** : [English](./README.md) · Français · Protocole : [FR](./docs/PROTOCOL.md) · [EN](./docs/PROTOCOL.en.md)
 
 **Couche d’enveloppe IDC — Effondrement Décisionnel Irréversible** (*Irreversible Decision Collapse*).
 Open source (licence MIT), pensée pour tous les runtimes d’agents (Cursor, Claude Code,

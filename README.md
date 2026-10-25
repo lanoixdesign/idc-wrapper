@@ -1,6 +1,6 @@
 # IDC Wrapper
 
-🌐 **Language / Langue** : [English](./README.md) · [Français](./README.fr.md)
+🌐 **Language / Langue** : English · [Français](./README.fr.md)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![Release](https://img.shields.io/github/v/release/lanoixdesign/idc-wrapper?display_name=tag&sort=semver)](https://github.com/lanoixdesign/idc-wrapper/releases/tag/v0.2.0)
@@ -8,98 +8,98 @@
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)](./python/)
 [![Rust](https://img.shields.io/badge/rust-2021-orange.svg)](./Cargo.toml)
 
-**Couche d’enveloppe IDC — Effondrement Décisionnel Irréversible**  
-Open source, pensée pour **tous les runtimes d’agents** (Cursor, Claude Code, LangGraph, OpenAI Agents, boucles custom…).
+**IDC wrapper layer — Irreversible Decision Collapse (*Effondrement Décisionnel Irréversible*)**  
+Open source, designed for **all agent runtimes** (Cursor, Claude Code, LangGraph, OpenAI Agents, custom loops…).
 
-> **English** — Finite deliberation budget `R`, append-only journal, optimal stop rule.
+> Finite deliberation budget `R`, append-only journal, optimal stop rule.
 > Hallucination should cost more than admitting ignorance. Mock benches are real
 > numbers on a fake LLM; theory remains hypothesis — see [PERFORMANCE.md](./PERFORMANCE.md).
 
-## Pourquoi l’IDC (vision, sans claims inventés)
+## Why IDC (vision, no invented claims)
 
-Une IA sans **finitude** peut réfléchir sans fin, hésiter, et inventer : inventer
-ne coûte souvent pas plus cher qu’avouer « je ne sais pas ». L’IDC propose
-d’envelopper le modèle avec :
+An AI without **finitude** can deliberate endlessly, hesitate, and make things up: making
+things up often costs no more than admitting "I don't know". IDC proposes
+wrapping the model with:
 
-1. une **ressource finie** `R` qui décroît avec le calcul,
-2. un **journal append-only** (engagements irréversibles),
-3. une **règle d’arrêt** (s’effondrer quand la valeur marginale de réfléchir
-   ne justifie plus le coût).
+1. a **finite resource** `R` that decreases with computation,
+2. an **append-only journal** (irreversible commitments),
+3. a **stop rule** (collapse when the marginal value of deliberating
+   no longer justifies the cost).
 
-C’est un **modèle + protocole de test**, pas une preuve empirique déjà validée
-sur les LLM de frontier. Les chiffres de ce dépôt viennent d’un **mock**
-reproductible — voir [PERFORMANCE.md](./PERFORMANCE.md).
+It is a **model + test protocol**, not empirical proof already validated
+on frontier LLMs. The numbers in this repository come from a reproducible
+**mock** — see [PERFORMANCE.md](./PERFORMANCE.md).
 
-## Livre / concept
+## Book / concept
 
-- Livre (Amazon FR) : [Effondrement Décisionnel Irréversible](https://www.amazon.fr/dp/B0HMX1CY6R)
-- Citation machine-readable : [`CITATION.cff`](./CITATION.cff)
+- Book (Amazon FR): [Effondrement Décisionnel Irréversible](https://www.amazon.fr/dp/B0HMX1CY6R)
+- Machine-readable citation: [`CITATION.cff`](./CITATION.cff)
 
-## Table des matières
+## Table of contents
 
-- [Pour les agents](#pour-les-agents)
-- [Quickstart Python](#quickstart-python)
-- [Quickstart Rust](#quickstart-rust)
-- [Exemples](#exemples)
-- [Adaptateur LangGraph](#adaptateur-langgraph)
-- [Packs agents](#packs-agents)
+- [For agents](#for-agents)
+- [Python quickstart](#python-quickstart)
+- [Rust quickstart](#rust-quickstart)
+- [Examples](#examples)
+- [LangGraph adapter](#langgraph-adapter)
+- [Agent packs](#agent-packs)
 - [Performance (mock)](#performance-mock)
-- [Recherche & benchmarks live](#recherche--benchmarks-live)
+- [Research & live benchmarks](#research--live-benchmarks)
 - [Structure](#structure)
-- [Paramètres](#paramètres)
+- [Parameters](#parameters)
 - [Roadmap](#roadmap)
-- [Communauté](#communauté)
-- [Licence & auteur](#licence--auteur)
+- [Community](#community)
+- [License & author](#license--author)
 
-## Pour les agents
+## For agents
 
-Lis d’abord **[AGENTS.md](./AGENTS.md)**.
+Read **[AGENTS.md](./AGENTS.md)** first.
 
-| Fichier | Rôle |
+| File | Role |
 |---------|------|
-| [`agents/skills/idc/SKILL.md`](./agents/skills/idc/SKILL.md) | Skill / recipe portable |
-| [`schema/idc-protocol.json`](./schema/idc-protocol.json) | Contrat machine-readable |
-| [`python/idc/`](./python/idc/) | Package référence (journal, agent, mock) |
-| [`python/idc/langgraph_adapter.py`](./python/idc/langgraph_adapter.py) | Adaptateur LangGraph-shaped (optionnel) |
-| [`python/idc_agent.py`](./python/idc_agent.py) | CLI (OpenAI-compatible ou `--mock`) |
-| [`src/lib.rs`](./src/lib.rs) | Bibliothèque Rust (`IdcAgent`, journal) |
-| [`src/main.rs`](./src/main.rs) | Binaire CLI mince |
-| [`examples/`](./examples/) | Cas Sans IDC / Avec IDC |
-| [`packs/`](./packs/) | Snippets Cursor / Claude / OpenAI Agents |
-| [`PERFORMANCE.md`](./PERFORMANCE.md) | Mesures mock + hypothèses vs démontré |
+| [`agents/skills/idc/SKILL.md`](./agents/skills/idc/SKILL.md) | Portable skill / recipe |
+| [`schema/idc-protocol.json`](./schema/idc-protocol.json) | Machine-readable contract |
+| [`python/idc/`](./python/idc/) | Reference package (journal, agent, mock) |
+| [`python/idc/langgraph_adapter.py`](./python/idc/langgraph_adapter.py) | LangGraph-shaped adapter (optional) |
+| [`python/idc_agent.py`](./python/idc_agent.py) | CLI (OpenAI-compatible or `--mock`) |
+| [`src/lib.rs`](./src/lib.rs) | Rust library (`IdcAgent`, journal) |
+| [`src/main.rs`](./src/main.rs) | Thin CLI binary |
+| [`examples/`](./examples/) | Without IDC / With IDC cases |
+| [`packs/`](./packs/) | Cursor / Claude / OpenAI Agents snippets |
+| [`PERFORMANCE.md`](./PERFORMANCE.md) | Mock measurements + hypotheses vs demonstrated |
 
-## Quickstart Python
+## Python quickstart
 
 ```bash
-# Démo sans clé API (recommandé pour découvrir)
+# Demo without an API key (recommended to get started)
 PYTHONPATH=python python3 python/idc_agent.py --mock support_client \
   "Client : où est mon colis ?"
 
-# Comparer baseline (pas de VOI) vs IDC
+# Compare baseline (no VOI) vs IDC
 PYTHONPATH=python python3 python/idc_agent.py --mock verbose --baseline "long"
 PYTHONPATH=python python3 python/idc_agent.py --mock verbose "long"
 
-# Avec API compatible OpenAI
+# With an OpenAI-compatible API
 export OPENAI_API_KEY=sk-...
-# optionnel : OPENAI_BASE_URL=http://localhost:11434/v1  OPENAI_MODEL=llama3.2
+# optional: OPENAI_BASE_URL=http://localhost:11434/v1  OPENAI_MODEL=llama3.2
 PYTHONPATH=python python3 python/idc_agent.py "Explique l’IDC en 5 points"
 ```
 
-Installation package (editable locale ; PyPI public prévu — voir [PUBLISHING.md](./PUBLISHING.md)) :
+Package installation (local editable; public PyPI planned — see [PUBLISHING.md](./PUBLISHING.md)):
 
 ```bash
 pip install -e .
-# ou plus tard : pip install idc-wrapper
+# or later: pip install idc-wrapper
 ```
 
-Tests / bench (aucune clé) :
+Tests / bench (no key):
 
 ```bash
 PYTHONPATH=python python3 -m unittest discover -s python/idc -v
 PYTHONPATH=python python3 benchmarks/bench_mock.py
 ```
 
-## Quickstart Rust
+## Rust quickstart
 
 ```bash
 cargo build --release
@@ -107,52 +107,52 @@ export OPENAI_API_KEY=sk-...
 ./target/release/idc-wrapper
 ```
 
-La logique vit dans la **crate lib** `idc_wrapper` (`src/lib.rs`) ; le binaire
-`src/main.rs` l’appelle seulement. Par défaut : `https://api.openai.com/v1/chat/completions`,
-modèle `gpt-4o-mini`.
+The logic lives in the **lib crate** `idc_wrapper` (`src/lib.rs`); the binary
+`src/main.rs` only calls it. Defaults: `https://api.openai.com/v1/chat/completions`,
+model `gpt-4o-mini`.
 
-> **Note toolchain** : `cargo check` / `cargo build` nécessitent un Rust stable
-> récent (CI utilise `dtolnay/rust-toolchain@stable`). Si ton `rustc` local est
-> trop ancien pour les dépendances (`reqwest` / `tokio`), la structure lib+bin
-> reste valide — mets à jour le toolchain ou peaufine en CI.
+> **Toolchain note**: `cargo check` / `cargo build` require a recent stable Rust
+> (CI uses `dtolnay/rust-toolchain@stable`). If your local `rustc` is
+> too old for the dependencies (`reqwest` / `tokio`), the lib+bin structure
+> remains valid — update the toolchain or polish in CI.
 
-## Exemples
+## Examples
 
-Cas concrets avec narration **Sans IDC / Avec IDC / Bénéfice** et scripts mock :
+Concrete cases with a **Without IDC / With IDC / Benefit** narrative and mock scripts:
 
-| # | Dossier | Idée |
+| # | Folder | Idea |
 |---|---------|------|
-| 01 | [`examples/01_support_client`](./examples/01_support_client/) | Support livraison |
-| 02 | [`examples/02_code_assistant`](./examples/02_code_assistant/) | Fix bug + stop avant API fantôme |
-| 03 | [`examples/03_research_synth`](./examples/03_research_synth/) | Synthèse bornée, pas de citation inventée |
-| 04 | [`examples/04_langgraph`](./examples/04_langgraph/) | Boucle nœud/état style LangGraph + arrêt IDC |
-| 05 | [`examples/05_swarm_agents`](./examples/05_swarm_agents/) | Essaim multi-agents, toggle `--idc` / `--no-idc` |
+| 01 | [`examples/01_support_client`](./examples/01_support_client/) | Delivery support |
+| 02 | [`examples/02_code_assistant`](./examples/02_code_assistant/) | Bug fix + stop before a phantom API |
+| 03 | [`examples/03_research_synth`](./examples/03_research_synth/) | Bounded synthesis, no invented citation |
+| 04 | [`examples/04_langgraph`](./examples/04_langgraph/) | LangGraph-style node/state loop + IDC stop |
+| 05 | [`examples/05_swarm_agents`](./examples/05_swarm_agents/) | Multi-agent swarm, `--idc` / `--no-idc` toggle |
 
-Voir [`examples/README.md`](./examples/README.md). Flux ASCII/Mermaid : [`docs/demo.md`](./docs/demo.md).
+See [`examples/README.md`](./examples/README.md). ASCII/Mermaid flow: [`docs/demo.md`](./docs/demo.md).
 
-## Adaptateur LangGraph
+## LangGraph adapter
 
-Boucle **nœud / état** compatible LangGraph, **sans dépendance obligatoire** :
+LangGraph-compatible **node / state** loop, **with no mandatory dependency**:
 
 ```bash
-# démo mock (stdlib)
+# mock demo (stdlib)
 PYTHONPATH=python python3 examples/04_langgraph/run_mock.py
 
-# optionnel : vrai StateGraph
-pip install 'idc-wrapper[langgraph]'   # ou : pip install langgraph
+# optional: real StateGraph
+pip install 'idc-wrapper[langgraph]'   # or: pip install langgraph
 ```
 
 ```python
 from idc.langgraph_adapter import IdcGraphRunner, compile_langgraph
-# IdcGraphRunner : toujours disponible
-# compile_langgraph(...) : ImportError clair si langgraph absent
+# IdcGraphRunner: always available
+# compile_langgraph(...): clear ImportError if langgraph is missing
 ```
 
-Détails : [`examples/04_langgraph/README.md`](./examples/04_langgraph/README.md).
+Details: [`examples/04_langgraph/README.md`](./examples/04_langgraph/README.md).
 
-## Packs agents
+## Agent packs
 
-Snippets copy-paste prêts :
+Ready-to-paste snippets:
 
 | Runtime | Pack |
 |---------|------|
@@ -162,31 +162,32 @@ Snippets copy-paste prêts :
 
 ## Performance (mock)
 
-Micro-benchmark **Baseline (N fixes) vs IDC (règle d’arrêt)** sur réponses mock.
-Dernière agrégation typique (régénérer localement pour confirmer) :
+Micro-benchmark **Baseline (fixed N) vs IDC (stop rule)** on mock responses.
+Latest typical aggregate (regenerate locally to confirm):
 
-| Agrégat | Baseline | IDC |
+| Aggregate | Baseline | IDC |
 |---------|----------|-----|
-| Étapes moyennes | 8.0 | ~3.4 |
-| Tokens≈ moyens | ~44.8 | ~26.6 |
-| R finale moyenne | ~64.2 | ~78.7 |
+| Mean steps | 8.0 | ~3.4 |
+| Mean tokens≈ | ~44.8 | ~26.6 |
+| Mean final R | ~64.2 | ~78.7 |
 
-Détail, caveats, et distinction **hypothèse livre vs démontré par le code** :
-**[PERFORMANCE.md](./PERFORMANCE.md)**. Aucun claim de perf LLM réel ici.
+Details, caveats, and the distinction **book hypothesis vs demonstrated by the code**:
+**[PERFORMANCE.md](./PERFORMANCE.md)**. No real-LLM performance claim here.
 
-## Recherche & benchmarks live
+## Research & live benchmarks
 
-Pour passer de l'hypothèse à la mesure, le dépôt contient un **protocole pré-enregistré**
-et un **harness reproductible** sur de vrais modèles (API Groq) :
+To move from hypothesis to measurement, the repository contains a **pre-registered protocol**
+and a **reproducible harness** on real models (Groq API):
 
-- **[docs/PROTOCOL.md](./docs/PROTOCOL.md)** — questions, hypothèses falsifiables H1–H7,
-  6 axes (efficacité, calibration de l'arrêt, robustesse multi-étapes, essaim à `R`
-  partagée, traçabilité, honnêteté/abstention), conditions `sans_idc` / `r_seule` /
-  `voi_seul` / `idc` + contrôle `un_appel` (amendement 1), juge aveugle, statistiques (bootstrap par tâche, McNemar),
-  menaces à la validité, plan longue durée.
-- **[benchmarks/](./benchmarks/README.md)** — 81 tâches versionnées
-  (`tasks/idc_tasks_v1.jsonl`), runner avec reprise et gestion des quotas,
-  juge, analyse → **[benchmarks/results/live/REPORT.md](./benchmarks/results/live/REPORT.md)**.
+- **[docs/PROTOCOL.md](./docs/PROTOCOL.md)** (French original; English translation:
+  [docs/PROTOCOL.en.md](./docs/PROTOCOL.en.md)) — questions, falsifiable hypotheses H1–H7,
+  6 axes (efficiency, stop calibration, multi-step robustness, swarm with shared `R`,
+  traceability, honesty/abstention), conditions `sans_idc` (without IDC) / `r_seule` (R only) /
+  `voi_seul` (VOI only) / `idc` + control `un_appel` (single call; amendment 1), blind judge, statistics (per-task bootstrap, McNemar),
+  threats to validity, long-run plan.
+- **[benchmarks/](./benchmarks/README.md)** — 81 versioned tasks
+  (`tasks/idc_tasks_v1.jsonl`), runner with resumption and quota handling,
+  judge, analysis → **[benchmarks/results/live/REPORT.md](./benchmarks/results/live/REPORT.md)**.
 
 ```bash
 export GROQ_API_KEY=...
@@ -195,71 +196,71 @@ python3 benchmarks/run_bench.py --models allam-2-7b qwen/qwen3.8-27b openai/gpt-
 python3 benchmarks/judge_bench.py && python3 benchmarks/analyze_bench.py
 ```
 
-> **État (24/10/2026) : passe pilote partielle**, interrompue par les quotas gratuits Groq
-> (3 modèles sujets, 1 répétition, conditions `sans_idc` / `idc` / `un_appel` ; ablations
-> `r_seule` / `voi_seul` pas encore lancées ; une partie des runs n'est pas encore jugée).
-> Les signaux du pilote (moins de tokens et de boucles avec IDC, effet sur les
-> hallucinations non significatif à ce stade) **ne permettent pas de conclure** à un gain
-> général : voir le rapport et ses intervalles. La passe longue durée reprend là où elle
-> s'est arrêtée (reprise par `run_id`).
+> **Status (24/10/2026): partial pilot run**, interrupted by Groq free-tier quotas
+> (3 subject models, 1 repetition, conditions `sans_idc` / `idc` / `un_appel`; ablations
+> `r_seule` / `voi_seul` not yet run; some of the runs not yet judged).
+> The pilot signals (fewer tokens and loops with IDC, effect on
+> hallucinations not significant at this stage) **do not allow concluding** a
+> general gain: see the report and its intervals. The long-run pass resumes where it
+> stopped (resumption by `run_id`).
 
 ## Structure
 
 ```
 idc-wrapper/
-├── AGENTS.md                 # contrat pour runtimes agents
-├── PERFORMANCE.md            # mesures mock honnêtes
+├── AGENTS.md                 # contract for agent runtimes
+├── PERFORMANCE.md            # honest mock measurements
 ├── ROADMAP.md                # v0.3 / v0.4
 ├── PUBLISHING.md             # PyPI trusted publisher
 ├── python/idc/               # package (journal, agent, mock, langgraph_adapter)
 ├── python/idc_agent.py       # CLI
-├── src/lib.rs                # crate Rust publique
-├── src/main.rs               # binaire mince
+├── src/lib.rs                # public Rust crate
+├── src/main.rs               # thin binary
 ├── schema/idc-protocol.json
 ├── agents/skills/idc/SKILL.md
 ├── packs/                    # Cursor / Claude / OpenAI Agents
-├── examples/                 # 4 cas + README (dont LangGraph)
-├── docs/demo.md              # flux IDC (ASCII / Mermaid)
+├── examples/                 # 4 cases + README (incl. LangGraph)
+├── docs/demo.md              # IDC flow (ASCII / Mermaid)
 ├── benchmarks/               # bench_mock.py + results/
-├── community/                # good-first-issues prêts à coller
+├── community/                # ready-to-paste good-first-issues
 └── .github/                  # CI, publish-pypi, templates
 ```
 
-## Paramètres
+## Parameters
 
-| Paramètre | Défaut | Rôle |
+| Parameter | Default | Role |
 |-----------|--------|------|
-| `resource` | 100.0 | Budget initial |
-| `critical_threshold` | 15.0 | Force l’arrêt |
-| `cost_per_token` | 0.8 | Coût approx. par token |
-| `max_steps` | 8 | Garde-fou |
+| `resource` | 100.0 | Initial budget |
+| `critical_threshold` | 15.0 | Forces the stop |
+| `cost_per_token` | 0.8 | Approx. cost per token |
+| `max_steps` | 8 | Safeguard |
 
-Heuristique VOI simple : `estimated_gain > cost_per_token * 50 * risk`.
+Simple VOI heuristic: `estimated_gain > cost_per_token * 50 * risk`.
 
 ## Roadmap
 
-Priorités v0.3 / v0.4 (PyPI live, crates.io, bench LLM réel, plus d’adapters) :
+v0.3 / v0.4 priorities (PyPI live, crates.io, real-LLM bench, more adapters):
 **[ROADMAP.md](./ROADMAP.md)**.
 
-## Communauté
+## Community
 
-- Contribuer : [CONTRIBUTING.md](./CONTRIBUTING.md) (FR + EN) — active aussi **Discussions** (Settings → Features)
-- Conduite : [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md)
-- Sécurité : [SECURITY.md](./SECURITY.md)
-- Changelog : [CHANGELOG.md](./CHANGELOG.md)
-- Good first issues : [community/GOOD_FIRST_ISSUES.md](./community/GOOD_FIRST_ISSUES.md)
-- Issues / PR : templates dans `.github/`
-- Publication PyPI : [PUBLISHING.md](./PUBLISHING.md)
+- Contribute: [CONTRIBUTING.md](./CONTRIBUTING.md) (FR + EN) — also enable **Discussions** (Settings → Features)
+- Conduct: [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md)
+- Security: [SECURITY.md](./SECURITY.md)
+- Changelog: [CHANGELOG.md](./CHANGELOG.md)
+- Good first issues: [community/GOOD_FIRST_ISSUES.md](./community/GOOD_FIRST_ISSUES.md)
+- Issues / PRs: templates in `.github/`
+- PyPI publishing: [PUBLISHING.md](./PUBLISHING.md)
 
-Idées bienvenues : VOI plus fine, persistance disque du journal, publish crates.io,
-adapter Agents SDK réel, calibrage dynamique du seuil — **avec mesures
-reproductibles**, pas de chiffres inventés. (Adaptateur LangGraph-shaped : v0.2.0.)
+Ideas welcome: finer VOI, on-disk journal persistence, crates.io publish,
+real Agents SDK adapter, dynamic threshold calibration — **with reproducible
+measurements**, no invented numbers. (LangGraph-shaped adapter: v0.2.0.)
 
-## Licence & auteur
+## License & author
 
 [MIT](./LICENSE) — Copyright (c) 2026 Micaël Lanoix
 
-**Micaël Lanoix** — continuité des travaux sur l’ADN numérique des images
-(PNGIA / Pixel 4D) et l’Effondrement Décisionnel Irréversible.
+**Micaël Lanoix** — continuing work on the digital DNA of images
+(PNGIA / Pixel 4D) and Irreversible Decision Collapse (*Effondrement Décisionnel Irréversible*).
 
-Citation : voir [`CITATION.cff`](./CITATION.cff). Livre : [Amazon FR](https://www.amazon.fr/dp/B0HMX1CY6R).
+Citation: see [`CITATION.cff`](./CITATION.cff). Book: [Amazon FR](https://www.amazon.fr/dp/B0HMX1CY6R).
