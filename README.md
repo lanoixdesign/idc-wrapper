@@ -1,5 +1,7 @@
 # IDC Wrapper
 
+🌐 **Language / Langue** : [English](./README.md) · [Français](./README.fr.md)
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![Release](https://img.shields.io/github/v/release/lanoixdesign/idc-wrapper?display_name=tag&sort=semver)](https://github.com/lanoixdesign/idc-wrapper/releases/tag/v0.2.0)
 [![CI](https://github.com/lanoixdesign/idc-wrapper/actions/workflows/ci.yml/badge.svg)](https://github.com/lanoixdesign/idc-wrapper/actions/workflows/ci.yml)

@@ -1,5 +1,7 @@
 # Protocole de recherche IDC — pré-enregistré (v1)
 
+> 🇬🇧 English version: [PROTOCOL.en.md](./PROTOCOL.en.md)
+
 > **Statut** : pré-enregistrement v1, rédigé et publié **avant** l'analyse de la passe
 > pilote. Toute modification ultérieure doit être datée dans la section
 > [Journal des amendements](#10-journal-des-amendements) — on ne réécrit pas l'historique
